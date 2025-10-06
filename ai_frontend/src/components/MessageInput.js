@@ -36,12 +36,11 @@ function MessageInput({ onSendMessage, isLoading, backendStatus, inputMessage, s
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
         placeholder="Type your message here... (Shift+Enter for new line)"
-        disabled={isLoading}
+        disabled={isLoading || backendStatus !== 'online'}
       />
       <button
         type="submit"
         className="send-button"
-        onClick={handleSend}
         disabled={isSendDisabled}
       >
         Send
