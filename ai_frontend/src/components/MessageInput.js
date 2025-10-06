@@ -8,7 +8,7 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = () => {
+  const handleSend = () => {
     // Parent component's onSendMessage has the primary guard.
     // This is an additional safeguard and UI logic.
     if (inputValue.trim() && !isLoading && backendStatus === 'online') {
@@ -17,10 +17,15 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSend();
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSend();
     }
   };
 
@@ -28,7 +33,7 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
   const isSendDisabled = isLoading || backendStatus !== 'online' || !inputValue.trim();
 
   return (
-    <div className="message-input-container">
+    <form className="message-input-container" onSubmit={handleSubmit}>
       <textarea
         className="message-input"
         value={inputValue}
@@ -39,13 +44,13 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
         disabled={isLoading}
       />
       <button
+        type="submit"
         className="send-button"
-        onClick={handleSendMessage}
         disabled={isSendDisabled}
       >
         Send
       </button>
-    </div>
+    </form>
   );
 }
 
