@@ -9,6 +9,7 @@ function App() {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Hello! How can I assist you today?' }
   ]);
+  const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const messageListRef = useRef(null);
@@ -37,16 +38,18 @@ function App() {
   }, [messages]);
 
   // PUBLIC_INTERFACE
-  const handleSendMessage = async (userInput) => {
-    if (!userInput.trim()) return;
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
 
     if (backendStatus !== 'online') {
         setError("Cannot send message. The backend is offline.");
         return;
     }
 
-    const newMessages = [...messages, { role: 'user', content: userInput }];
+    const newMessages = [...messages, { role: 'user', content: inputMessage }];
     setMessages(newMessages);
+    const currentInput = inputMessage;
+    setInputMessage(""); // Clear input after sending
     setIsLoading(true);
     setError(null);
 
@@ -56,6 +59,7 @@ function App() {
     } catch (err) {
       console.error("Error in handleSendMessage:", err);
       setError(err.message || 'An unexpected error occurred.');
+      setInputMessage(currentInput); // Restore input on error
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +90,13 @@ function App() {
         )}
       </div>
       
-      <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} backendStatus={backendStatus} />
+      <MessageInput
+        onSendMessage={handleSendMessage}
+        isLoading={isLoading}
+        backendStatus={backendStatus}
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+      />
     </div>
   );
 }

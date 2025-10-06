@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // PUBLIC_INTERFACE
-function MessageInput({ onSendMessage, isLoading, backendStatus }) {
-  const [inputValue, setInputValue] = useState('');
+function MessageInput({ onSendMessage, isLoading, backendStatus, inputMessage, setInputMessage }) {
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+    setInputMessage(e.target.value);
   };
 
   const handleSend = () => {
-    // Parent component's onSendMessage has the primary guard.
-    // This is an additional safeguard and UI logic.
-    if (inputValue.trim() && !isLoading && backendStatus === 'online') {
-      onSendMessage(inputValue);
-      setInputValue('');
+    // Guard against sending empty or during loading, parent handles main logic
+    if (inputMessage.trim() && !isLoading && backendStatus === 'online') {
+      onSendMessage();
     }
   };
 
@@ -24,28 +21,27 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
+      e.preventDefault(); // Prevent new line on Enter
       handleSend();
     }
   };
 
-  // The button should be disabled if we are loading, if the backend is not online, or if the input is empty.
-  const isSendDisabled = isLoading || backendStatus !== 'online' || !inputValue.trim();
+  const isSendDisabled = isLoading || backendStatus !== 'online' || !inputMessage.trim();
 
   return (
     <form className="message-input-container" onSubmit={handleSubmit}>
       <textarea
         className="message-input"
-        value={inputValue}
+        value={inputMessage}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
         placeholder="Type your message here... (Shift+Enter for new line)"
-        // The input itself should only be disabled when a response is actively loading.
         disabled={isLoading}
       />
       <button
         type="submit"
         className="send-button"
+        onClick={handleSend}
         disabled={isSendDisabled}
       >
         Send
