@@ -1,104 +1,173 @@
-/* CSS Variables for Theme Management */
+/* Executive Gray Classic Theme */
 :root {
-  /* Light theme colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --text-primary: #282c34;
-  --text-secondary: #61dafb;
-  --border-color: #e9ecef;
-  --button-bg: #007bff;
-  --button-text: #ffffff;
+  --background: #F9FAFB;
+  --surface: #FFFFFF;
+  --primary: #374151;
+  --secondary: #9CA3AF;
+  --success: #059669;
+  --error: #DC2626;
+  --text-primary: #111827;
+  --text-on-primary-bg: #FFFFFF;
+  --border-color: #E5E7EB;
 }
 
-[data-theme="dark"] {
-  /* Dark theme colors */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #282c34;
-  --text-primary: #ffffff;
-  --text-secondary: #61dafb;
-  --border-color: #404040;
-  --button-bg: #0056b3;
-  --button-text: #ffffff;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background);
+  color: var(--text-primary);
 }
 
 .App {
-  text-align: center;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: var(--bg-secondary);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  height: 100vh;
+  max-width: 768px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: var(--surface);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.app-header {
+  padding: 1rem;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin: 0;
+}
+
+.error-banner {
+  background-color: var(--error);
+  color: var(--text-on-primary-bg);
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.error-banner p {
+  margin: 0;
+}
+
+.message-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message {
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  max-width: 85%;
+  word-wrap: break-word;
+}
+
+.user-message {
+  background-color: var(--primary);
+  color: var(--text-on-primary-bg);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+  background-color: #E5E7EB; /* A light gray from the palette */
   color: var(--text-primary);
-  transition: background-color 0.3s ease;
-  position: relative;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
 }
 
-.App-link {
-  color: var(--text-secondary);
-  transition: color 0.3s ease;
+.message p:last-child {
+  margin-bottom: 0;
 }
 
-.theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: var(--button-bg);
-  color: var(--button-text);
+/* Markdown & Syntax Highlighting Styles */
+.message pre {
+  background-color: #2d2d2d !important; /* Dark background for code blocks */
+  border-radius: 8px;
+  padding: 1rem !important;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+.message code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.message-input-container {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--surface);
+}
+
+.message-input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  resize: none;
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.5;
+  margin-right: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(55, 65, 81, 0.2);
+}
+
+.message-input:disabled {
+  background-color: #F3F4F6;
+}
+
+.send-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--success);
+  color: white;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, opacity 0.2s;
 }
 
-.theme-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  opacity: 0.9;
+.send-button:hover {
+  background-color: #047857;
 }
 
-.theme-toggle:active {
-  transform: translateY(0);
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.send-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Responsive design for mobile */
 @media (max-width: 768px) {
-  .theme-toggle {
-    top: 10px;
-    right: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
+  .App {
+    border-left: none;
+    border-right: none;
+  }
+
+  .message-list {
+    padding: 1rem;
+  }
+
+  .message-input-container {
+    padding: 0.5rem;
   }
 }
