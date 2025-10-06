@@ -11,7 +11,9 @@ const API_URL = process.env.REACT_APP_API_URL;
 export const sendChat = async (messages) => {
   try {
     const response = await axios.post(`${API_URL}/chat`, { messages });
-    return { assistantMessage: response.data.assistantMessage };
+    // The backend sends back { reply: '...' }, but the frontend expects a message object.
+    const assistantMessage = { role: 'assistant', content: response.data.reply };
+    return { assistantMessage };
   } catch (error) {
     console.error("Error sending message to backend:", error);
     throw new Error("Failed to get a response from the assistant. Please check if the backend is running.");
