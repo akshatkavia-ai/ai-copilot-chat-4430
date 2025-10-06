@@ -41,11 +41,6 @@ function App() {
     console.log('handleSendMessage triggered with:', message);
     if (!message.trim()) return;
 
-    if (backendStatus !== 'online') {
-        setError("Cannot send message. The backend is offline.");
-        return;
-    }
-
     const userMessage = { role: 'user', content: message };
     const newMessages = [...messages, userMessage];
     
@@ -97,7 +92,6 @@ function App() {
       <MessageInput
         onSendMessage={handleSendMessage}
         isLoading={isLoading}
-        backendStatus={backendStatus}
       />
     </div>
   );

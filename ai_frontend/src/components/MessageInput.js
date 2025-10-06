@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // PUBLIC_INTERFACE
-function MessageInput({ onSendMessage, isLoading, backendStatus }) {
+function MessageInput({ onSendMessage, isLoading }) {
   const [message, setMessage] = useState('');
 
   const handleInputChange = (e) => {
@@ -9,30 +9,25 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
   };
 
   const handleSend = () => {
-    console.log('handleSend triggered');
     if (message.trim()) {
       onSendMessage(message);
       setMessage('');
     }
   };
 
+  const isSendDisabled = isLoading || !message.trim();
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      console.log('Enter key pressed');
       // Manually check if send is disabled before sending via Enter key
       if (!isSendDisabled) {
         handleSend();
       }
     }
   };
-
-  const isSendDisabled = isLoading || backendStatus !== 'online' || !message.trim();
   
-  const placeholderText =
-    backendStatus === 'online'
-      ? 'Type your message here... (Shift+Enter for new line)'
-      : 'You can type, but the backend is offline.';
+  const placeholderText = 'Type your message here... (Shift+Enter for new line)';
 
   return (
     <div className="message-input-container">
