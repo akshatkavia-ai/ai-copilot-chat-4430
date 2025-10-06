@@ -11,6 +11,7 @@ function App() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [errorHint, setErrorHint] = useState(null);
   const messageListRef = useRef(null);
   const [backendStatus, setBackendStatus] = useState('checking'); // checking, online, offline
 
@@ -38,7 +39,7 @@ function App() {
 
   // PUBLIC_INTERFACE
   const handleSendMessage = async (message) => {
-    console.log('handleSendMessage triggered with:', message);
+    console.log('[App] Send attempt started with message:', message);
     if (!message.trim()) return;
 
     const userMessage = { role: 'user', content: message };
@@ -47,19 +48,21 @@ function App() {
     setMessages(newMessages);
     setIsLoading(true);
     setError(null);
+    setErrorHint(null);
 
     try {
-      console.log('Sending messages to API:', newMessages);
+      console.log('[App] Sending messages to API:', newMessages);
       const { assistantMessage } = await sendChat(newMessages);
-      console.log('Received assistant message:', assistantMessage);
+      console.log('[App] Send succeeded, received assistant message:', assistantMessage);
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
     } catch (err) {
-      console.error("Error in handleSendMessage:", err);
+      console.error("[App] Send failed with error:", err);
       setError(err.message || 'An unexpected error occurred.');
+      setErrorHint(err.hint || 'Please check backend status and CORS configuration.');
       // Revert optimistic update on error
       setMessages(messages);
     } finally {
-      console.log('Finished handleSendMessage');
+      console.log('[App] Send attempt finished');
       setIsLoading(false);
     }
   };
@@ -76,7 +79,8 @@ function App() {
 
       {error && (
         <div className="error-banner">
-          <p>{error}</p>
+          <p><strong>Error:</strong> {error}</p>
+          {errorHint && <p><strong>Hint:</strong> {errorHint}</p>}
         </div>
       )}
 

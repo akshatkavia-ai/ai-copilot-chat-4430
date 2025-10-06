@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+console.log('[API] Base URL:', API_BASE_URL);
 
 /**
  * Sends a chat message to the backend API.
@@ -11,7 +12,14 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 export const sendChat = async (messages) => {
   console.log('api.js/sendChat: preparing to send messages:', messages);
   try {
-    const response = await axios.post(`${API_URL}/chat`, { messages });
+    const response = await axios.post(`${API_BASE_URL}/chat`, 
+      { messages },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
     console.log('api.js/sendChat: received response:', response);
 
     if (response.data && response.data.reply) {
@@ -24,33 +32,47 @@ export const sendChat = async (messages) => {
   } catch (error) {
     console.error("Error sending message to backend:", error);
     let errorMessage = "An unexpected error occurred while sending your message.";
+    let hint = "Check backend logs or network tab.";
 
     if (error.response) {
       // The server responded with a status code outside the 2xx range
       console.error('api.js/sendChat: error response:', error.response);
       const { status, data } = error.response;
+      
       if (status === 400) {
-        errorMessage = `Server error (400): ${data.detail || 'Bad Request'}. This may be due to a missing or invalid API key.`;
+        errorMessage = `Server error (400): ${data.error || data.detail || 'Bad Request'}`;
+        hint = data.hint || "This may be due to a missing or invalid API key.";
       } else if (status === 422) {
         // Handle FastAPI validation errors
         try {
-            const errorDetails = data.detail.map(err => `${err.loc.join(' -> ')}: ${err.msg}`).join(', ');
-            errorMessage = `Invalid request (422): ${errorDetails}`;
+          const errorDetails = data.detail.map(err => `${err.loc.join(' -> ')}: ${err.msg}`).join(', ');
+          errorMessage = `Invalid request (422): ${errorDetails}`;
+          hint = "Check request format.";
         } catch (e) {
-            errorMessage = `Invalid request (422): ${JSON.stringify(data.detail) || 'Unprocessable Entity'}`;
+          errorMessage = `Invalid request (422): ${JSON.stringify(data.detail) || 'Unprocessable Entity'}`;
+          hint = "Check request format.";
         }
+      } else if (status === 500) {
+        errorMessage = data.error || data.detail || 'Internal server error (500)';
+        hint = data.hint || "The backend might be having issues with its configuration or the Gemini API.";
       } else if (status >= 500) {
-        errorMessage = 'An internal server error occurred (5xx). The backend might be having issues with its configuration or the Gemini API.';
+        errorMessage = 'An internal server error occurred (5xx).';
+        hint = "The backend might be having issues.";
       } else {
-        errorMessage = `Received an unexpected status code: ${status}`;
+        errorMessage = `API ${status}: ${data.message || data.error || data.detail || error.response.statusText}`;
+        hint = "Unexpected status code.";
       }
     } else if (error.request) {
       // The request was made but no response was received
       console.error('api.js/sendChat: no response received:', error.request);
-      errorMessage = "Failed to get a response from the assistant. Please check if the backend is running and reachable (CORS or network issue).";
+      errorMessage = "Failed to get a response from the assistant.";
+      hint = "Please check if the backend is running and reachable. This could be a CORS or network issue.";
     }
 
-    throw new Error(errorMessage);
+    // Throw structured error with message and hint
+    const structuredError = new Error(errorMessage);
+    structuredError.hint = hint;
+    throw structuredError;
   }
 };
 
@@ -61,12 +83,12 @@ export const sendChat = async (messages) => {
  */
 // PUBLIC_INTERFACE
 export const healthCheck = async () => {
-    try {
-        // Use a timeout to avoid waiting indefinitely
-        await axios.get(`${API_URL}/`, { timeout: 5000 });
-        return true;
-    } catch (error) {
-        console.error("Backend health check failed:", error);
-        return false;
-    }
+  try {
+    // Use a timeout to avoid waiting indefinitely
+    await axios.get(`${API_BASE_URL}/`, { timeout: 5000 });
+    return true;
+  } catch (error) {
+    console.error("Backend health check failed:", error);
+    return false;
+  }
 };
