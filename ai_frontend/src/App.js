@@ -85,7 +85,7 @@ function App() {
         )}
       </div>
       
-      <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading || backendStatus !== 'online'} />
+      <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} backendStatus={backendStatus} />
     </div>
   );
 }

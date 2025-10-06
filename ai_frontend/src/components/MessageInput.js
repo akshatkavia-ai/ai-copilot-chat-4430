@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // PUBLIC_INTERFACE
-function MessageInput({ onSendMessage, isLoading }) {
+function MessageInput({ onSendMessage, isLoading, backendStatus }) {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (e) => {
@@ -9,7 +9,9 @@ function MessageInput({ onSendMessage, isLoading }) {
   };
 
   const handleSendMessage = () => {
-    if (inputValue.trim() && !isLoading) {
+    // Parent component's onSendMessage has the primary guard.
+    // This is an additional safeguard and UI logic.
+    if (inputValue.trim() && !isLoading && backendStatus === 'online') {
       onSendMessage(inputValue);
       setInputValue('');
     }
@@ -22,6 +24,9 @@ function MessageInput({ onSendMessage, isLoading }) {
     }
   };
 
+  // The button should be disabled if we are loading, if the backend is not online, or if the input is empty.
+  const isSendDisabled = isLoading || backendStatus !== 'online' || !inputValue.trim();
+
   return (
     <div className="message-input-container">
       <textarea
@@ -30,12 +35,13 @@ function MessageInput({ onSendMessage, isLoading }) {
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
         placeholder="Type your message here... (Shift+Enter for new line)"
+        // The input itself should only be disabled when a response is actively loading.
         disabled={isLoading}
       />
       <button
         className="send-button"
         onClick={handleSendMessage}
-        disabled={isLoading}
+        disabled={isSendDisabled}
       >
         Send
       </button>
