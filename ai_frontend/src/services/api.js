@@ -9,8 +9,10 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
  */
 // PUBLIC_INTERFACE
 export const sendChat = async (messages) => {
+  console.log('api.js/sendChat: preparing to send messages:', messages);
   try {
     const response = await axios.post(`${API_URL}/chat`, { messages });
+    console.log('api.js/sendChat: received response:', response);
 
     if (response.data && response.data.reply) {
       const assistantMessage = { role: 'assistant', content: response.data.reply };
@@ -25,6 +27,7 @@ export const sendChat = async (messages) => {
 
     if (error.response) {
       // The server responded with a status code outside the 2xx range
+      console.error('api.js/sendChat: error response:', error.response);
       const { status, data } = error.response;
       if (status === 400) {
         errorMessage = `Server error (400): ${data.detail || 'Bad Request'}. This may be due to a missing or invalid API key.`;
@@ -43,6 +46,7 @@ export const sendChat = async (messages) => {
       }
     } else if (error.request) {
       // The request was made but no response was received
+      console.error('api.js/sendChat: no response received:', error.request);
       errorMessage = "Failed to get a response from the assistant. Please check if the backend is running and reachable (CORS or network issue).";
     }
 

@@ -38,6 +38,7 @@ function App() {
 
   // PUBLIC_INTERFACE
   const handleSendMessage = async (message) => {
+    console.log('handleSendMessage triggered with:', message);
     if (!message.trim()) return;
 
     if (backendStatus !== 'online') {
@@ -45,19 +46,25 @@ function App() {
         return;
     }
 
-    const newMessages = [...messages, { role: 'user', content: message }];
+    const userMessage = { role: 'user', content: message };
+    const newMessages = [...messages, userMessage];
+    
     setMessages(newMessages);
     setIsLoading(true);
     setError(null);
 
     try {
+      console.log('Sending messages to API:', newMessages);
       const { assistantMessage } = await sendChat(newMessages);
+      console.log('Received assistant message:', assistantMessage);
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
     } catch (err) {
       console.error("Error in handleSendMessage:", err);
       setError(err.message || 'An unexpected error occurred.');
-      // No need to restore input, as MessageInput component maintains its own state
+      // Revert optimistic update on error
+      setMessages(messages);
     } finally {
+      console.log('Finished handleSendMessage');
       setIsLoading(false);
     }
   };

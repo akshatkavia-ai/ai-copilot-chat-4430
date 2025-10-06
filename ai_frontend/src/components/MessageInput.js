@@ -9,6 +9,7 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
   };
 
   const handleSend = () => {
+    console.log('handleSend triggered');
     if (message.trim()) {
       onSendMessage(message);
       setMessage('');
@@ -18,6 +19,7 @@ function MessageInput({ onSendMessage, isLoading, backendStatus }) {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      console.log('Enter key pressed');
       // Manually check if send is disabled before sending via Enter key
       if (!isSendDisabled) {
         handleSend();
