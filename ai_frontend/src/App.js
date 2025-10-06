@@ -54,6 +54,7 @@ function App() {
       const { assistantMessage } = await sendChat(newMessages);
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
     } catch (err) {
+      console.error("Error in handleSendMessage:", err);
       setError(err.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);

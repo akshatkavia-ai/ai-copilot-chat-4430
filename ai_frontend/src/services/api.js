@@ -11,27 +11,42 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 export const sendChat = async (messages) => {
   try {
     const response = await axios.post(`${API_URL}/chat`, { messages });
-    // The backend sends back { reply: '...' }, but the frontend expects a message object.
-    const assistantMessage = { role: 'assistant', content: response.data.reply };
-    return { assistantMessage };
+
+    if (response.data && response.data.reply) {
+      const assistantMessage = { role: 'assistant', content: response.data.reply };
+      return { assistantMessage };
+    } else {
+      // Handle cases where the response is 200 OK but the data is not what we expect
+      throw new Error("Received an invalid response from the assistant.");
+    }
   } catch (error) {
     console.error("Error sending message to backend:", error);
+    let errorMessage = "An unexpected error occurred while sending your message.";
 
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      if (error.response.status === 400) {
-        throw new Error(`Server error: ${error.response.data.detail || 'Bad Request'}. This might be due to a missing or invalid API key.`);
-      }
-      if (error.response.status >= 500) {
-         throw new Error('An internal server error occurred. The backend might be having issues with its configuration or the Gemini API.');
+      // The server responded with a status code outside the 2xx range
+      const { status, data } = error.response;
+      if (status === 400) {
+        errorMessage = `Server error (400): ${data.detail || 'Bad Request'}. This may be due to a missing or invalid API key.`;
+      } else if (status === 422) {
+        // Handle FastAPI validation errors
+        try {
+            const errorDetails = data.detail.map(err => `${err.loc.join(' -> ')}: ${err.msg}`).join(', ');
+            errorMessage = `Invalid request (422): ${errorDetails}`;
+        } catch (e) {
+            errorMessage = `Invalid request (422): ${JSON.stringify(data.detail) || 'Unprocessable Entity'}`;
+        }
+      } else if (status >= 500) {
+        errorMessage = 'An internal server error occurred (5xx). The backend might be having issues with its configuration or the Gemini API.';
+      } else {
+        errorMessage = `Received an unexpected status code: ${status}`;
       }
     } else if (error.request) {
       // The request was made but no response was received
-      throw new Error("Failed to get a response from the assistant. Please check if the backend is running and reachable.");
+      errorMessage = "Failed to get a response from the assistant. Please check if the backend is running and reachable (CORS or network issue).";
     }
-    // Something happened in setting up the request that triggered an Error
-    throw new Error("An unexpected error occurred while sending your message.");
+
+    throw new Error(errorMessage);
   }
 };
 
