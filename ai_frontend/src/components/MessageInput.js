@@ -1,51 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // PUBLIC_INTERFACE
-function MessageInput({ onSendMessage, isLoading, backendStatus, inputMessage, setInputMessage }) {
+function MessageInput({ onSendMessage, isLoading, backendStatus }) {
+  const [message, setMessage] = useState('');
 
   const handleInputChange = (e) => {
-    setInputMessage(e.target.value);
+    setMessage(e.target.value);
   };
 
   const handleSend = () => {
-    // Guard against sending empty or during loading, parent handles main logic
-    if (inputMessage.trim() && !isLoading && backendStatus === 'online') {
-      onSendMessage();
+    if (message.trim()) {
+      onSendMessage(message);
+      setMessage('');
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleSend();
-  };
-
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent new line on Enter
-      handleSend();
+      e.preventDefault();
+      // Manually check if send is disabled before sending via Enter key
+      if (!isSendDisabled) {
+        handleSend();
+      }
     }
   };
 
-  const isSendDisabled = isLoading || backendStatus !== 'online' || !inputMessage.trim();
+  const isSendDisabled = isLoading || backendStatus !== 'online' || !message.trim();
+  
+  const placeholderText =
+    backendStatus === 'online'
+      ? 'Type your message here... (Shift+Enter for new line)'
+      : 'You can type, but the backend is offline.';
 
   return (
-    <form className="message-input-container" onSubmit={handleSubmit}>
+    <div className="message-input-container">
       <textarea
         className="message-input"
-        value={inputMessage}
+        value={message}
         onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-        placeholder="Type your message here... (Shift+Enter for new line)"
-        disabled={isLoading || backendStatus !== 'online'}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholderText}
+        disabled={isLoading}
       />
       <button
-        type="submit"
+        type="button"
         className="send-button"
+        onClick={handleSend}
         disabled={isSendDisabled}
       >
         Send
       </button>
-    </form>
+    </div>
   );
 }
 
