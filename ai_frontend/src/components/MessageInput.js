@@ -37,7 +37,7 @@ function MessageInput({ onSendMessage, isLoading }) {
         onClick={handleSendMessage}
         disabled={isLoading}
       >
-        {isLoading ? 'Sending...' : 'Send'}
+        Send
       </button>
     </div>
   );

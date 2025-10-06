@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import ChatMessage from './components/ChatMessage';
 import MessageInput from './components/MessageInput';
-import { sendChat } from './services/api';
+import { sendChat, healthCheck } from './services/api';
 
 // PUBLIC_INTERFACE
 function App() {
@@ -12,6 +12,22 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const messageListRef = useRef(null);
+  const [backendStatus, setBackendStatus] = useState('checking'); // checking, online, offline
+
+  useEffect(() => {
+    // Perform an initial health check when the component mounts
+    const checkBackendStatus = async () => {
+      const isOnline = await healthCheck();
+      setBackendStatus(isOnline ? 'online' : 'offline');
+    };
+
+    checkBackendStatus();
+
+    // Optional: Periodically check the health
+    const intervalId = setInterval(checkBackendStatus, 60000); // Check every 60 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
 
   useEffect(() => {
     // Scroll to the bottom of the message list whenever messages change
@@ -23,6 +39,11 @@ function App() {
   // PUBLIC_INTERFACE
   const handleSendMessage = async (userInput) => {
     if (!userInput.trim()) return;
+
+    if (backendStatus !== 'online') {
+        setError("Cannot send message. The backend is offline.");
+        return;
+    }
 
     const newMessages = [...messages, { role: 'user', content: userInput }];
     setMessages(newMessages);
@@ -42,6 +63,10 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
+        <div className="status-indicator">
+          <div className={`status-dot ${backendStatus}`} />
+           Backend: {backendStatus.charAt(0).toUpperCase() + backendStatus.slice(1)}
+        </div>
         <h1>AI Copilot</h1>
       </header>
 
@@ -60,7 +85,7 @@ function App() {
         )}
       </div>
       
-      <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+      <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading || backendStatus !== 'online'} />
     </div>
   );
 }
