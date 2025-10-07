@@ -80,3 +80,21 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Backend connectivity and proxies
+
+By default, the app uses relative URLs for API calls (e.g., `/health`) so it works out-of-the-box with same-origin proxies.
+
+If your backend is on a different host/port, set an environment variable in `.env`:
+
+```
+REACT_APP_API_URL=https://your-backend-host:3001
+```
+
+For preview/proxy environments where the backend is available under a path (e.g., `/api`), set:
+
+```
+REACT_APP_API_URL=/api
+```
+
+Then restart the dev server for changes to take effect.
