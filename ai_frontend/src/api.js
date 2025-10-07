@@ -1,6 +1,6 @@
 /**
  * API client for communicating with the FastAPI backend.
- * Uses relative paths to benefit from CRA proxy configuration.
+ * Uses relative paths to benefit from proxy configuration.
  * PUBLIC_INTERFACE
  */
 
@@ -24,11 +24,10 @@ const API_BASE = getApiBaseUrl();
  * PUBLIC_INTERFACE
  * 
  * @param {Array<{role: string, content: string}>} messages - Array of chat messages
- * @param {string} [sessionId] - Optional session identifier
- * @returns {Promise<{message: {role: string, content: string}, model: string, notes?: string}>}
+ * @returns {Promise<{message: {role: string, content: string}, model: string}>}
  * @throws {Error} If the request fails
  */
-export async function sendChatMessage(messages, sessionId = null) {
+export async function sendChatMessage(messages) {
   const url = `${API_BASE}/api/chat`;
   
   const requestBody = {

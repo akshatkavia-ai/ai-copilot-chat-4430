@@ -1,5 +1,5 @@
 import React from 'react';
-import ChatPage from './pages/ChatPage';
+import ChatPage from './ChatPage';
 
 /**
  * Main App component.

@@ -1,6 +1,6 @@
 /**
  * Global styles and CSS variables for the AI Copilot Chat application.
- * Implements the Executive Gray theme from the style guide.
+ * Implements the Executive Gray theme.
  */
 
 :root {
@@ -14,11 +14,6 @@
   --color-text: #111827;
   --color-text-secondary: #6B7280;
   --color-border: #E5E7EB;
-  
-  /* Dark theme adjustments */
-  --color-bg-dark: #1F2937;
-  --color-surface-dark: #374151;
-  --color-text-dark: #F9FAFB;
   
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -99,16 +94,16 @@ code {
 }
 
 .markdown-content code {
-  background-color: var(--color-surface-dark);
-  color: var(--color-text-dark);
+  background-color: #374151;
+  color: #F9FAFB;
   padding: 0.125rem 0.25rem;
   border-radius: var(--radius-sm);
   font-size: 0.875em;
 }
 
 .markdown-content pre {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-dark);
+  background-color: #1F2937;
+  color: #F9FAFB;
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
   overflow-x: auto;
@@ -154,10 +149,4 @@ code {
 .markdown-content th {
   background-color: var(--color-surface);
   font-weight: 600;
-}
-
-/* Syntax highlighting theme */
-.hljs {
-  background: var(--color-bg-dark) !important;
-  color: var(--color-text-dark) !important;
 }

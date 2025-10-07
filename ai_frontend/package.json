@@ -1,7 +1,8 @@
 {
-  "name": "ai-copilot-chat",
+  "name": "ai_frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "proxy": "http://localhost:3001",
   "dependencies": {
     "react": "^18.2.0",
@@ -9,7 +10,8 @@
     "react-scripts": "^5.0.1",
     "react-markdown": "^8.0.7",
     "remark-gfm": "^3.0.1",
-    "rehype-highlight": "^6.0.0"
+    "rehype-highlight": "^6.0.0",
+    "axios": "^1.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -18,7 +20,9 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -31,8 +35,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
   }
 }
