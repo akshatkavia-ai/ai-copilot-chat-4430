@@ -1,100 +1,116 @@
-# Lightweight React Template for KAVIA
+# AI Copilot Chat - Frontend
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A clean, responsive React chat interface for interacting with an AI assistant powered by the Gemini API. Features markdown rendering, syntax highlighting, and a modern Executive Gray themed UI.
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+- **Clean Chat Interface**: Single-page chat layout with message history
+- **Markdown Support**: Full markdown rendering with GitHub Flavored Markdown
+- **Syntax Highlighting**: Code blocks with automatic language detection
+- **Executive Gray Theme**: Professional dark-themed UI with gray color palette
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Real-time Interaction**: Instant message sending and receiving
+- **Error Handling**: Graceful error display with user-friendly messages
 
 ## Getting Started
 
-In the project directory, you can run:
+### Prerequisites
 
-### `npm start`
+- Node.js 14+ and npm
+- Backend API running on port 3001 (or configure via environment variable)
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Installation
 
-### `npm test`
+```bash
+npm install
+```
 
-Launches the test runner in interactive watch mode.
+### Development
 
-### `npm run build`
+Start the development server:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-## Customization
+The app will open at [http://localhost:3000](http://localhost:3000) and automatically proxy API requests to `http://localhost:3001`.
 
-### Colors
+### Environment Configuration
 
-The main brand colors are defined as CSS variables in `src/App.css`:
+Create a `.env` file based on `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Configuration options:
+
+- `REACT_APP_API_BASE`: Backend API base URL (optional)
+  - Leave unset to use relative paths with the development proxy
+  - Set to backend URL for production deployments
+  - Example: `REACT_APP_API_BASE=https://api.example.com`
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+Builds the app for production to the `build` folder.
+
+## Architecture
+
+### Component Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Header.js       # App title and branding
+│   ├── MessageList.js  # Message container with auto-scroll
+│   ├── MessageItem.js  # Individual message with markdown
+│   └── ChatInput.js    # Input field with send button
+├── pages/
+│   └── ChatPage.js     # Main chat page layout
+├── api.js              # API client for backend communication
+├── types.js            # Type definitions
+├── index.css           # Global styles and theme variables
+├── App.js              # Root component
+└── index.js            # Entry point
+```
+
+### API Integration
+
+The app communicates with a FastAPI backend via REST endpoints:
+
+- `POST /api/chat`: Send messages and receive responses
+- `GET /health`: Check backend health status
+
+API requests use relative paths by default, leveraging the CRA proxy configuration for development. In production, set `REACT_APP_API_BASE` to your backend URL.
+
+## Theme Customization
+
+The Executive Gray theme is defined using CSS custom properties in `src/index.css`:
 
 ```css
 :root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --color-primary: #374151;
+  --color-secondary: #9CA3AF;
+  --color-success: #059669;
+  --color-error: #DC2626;
+  --color-background: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
 }
 ```
 
-### Components
+Modify these variables to customize the color scheme.
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+## Usage Tips
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+- **Send Messages**: Type in the input field and press Enter (or click send button)
+- **New Lines**: Use Shift+Enter to add line breaks in messages
+- **Markdown**: Messages support full markdown syntax including code blocks
+- **Code Highlighting**: Wrap code in triple backticks with language identifier
 
-## Learn More
+Example message with code:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-## Backend connectivity and proxies
-
-By default, the app uses relative URLs for API calls (e.g., `/health`) so it works out-of-the-box with same-origin proxies.
-
-If your backend is on a different host/port, set an environment variable in `.env`:
-
-```
-REACT_APP_API_URL=https://your-backend-host:3001
-```
-
-For preview/proxy environments where the backend is available under a path (e.g., `/api`), set:
-
-```
-REACT_APP_API_URL=/api
-```
-
-Then restart the dev server for changes to take effect.
