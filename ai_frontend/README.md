@@ -15,8 +15,10 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in development mode.\
+Runs the app in development mode. The dev server binds to 0.0.0.0:3000 (set via HOST and PORT in package.json) so it is reachable in containerized previews.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+If your backend runs on a different host than localhost inside the preview/container, set REACT_APP_API_URL accordingly (see .env.example).
 
 ### `npm test`
 

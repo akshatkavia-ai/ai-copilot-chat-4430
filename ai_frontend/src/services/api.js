@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL =
+  // Prefer CRA env variable
+  process.env.REACT_APP_API_URL ||
+  // Allow host environments to inject at runtime via global
+  (typeof window !== 'undefined' && window.__API_BASE_URL__) ||
+  // Default fallback for local dev
+  'http://localhost:3001';
+
 console.log('[API] Base URL:', API_BASE_URL);
 
 /**
